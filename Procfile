@@ -1,0 +1,1 @@
+web: java -jar target/Disaster-Management-Tool-0.0.1-SNAPSHOT.jar
