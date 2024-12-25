@@ -1,6 +1,17 @@
-#target/
-#.git/
-#.idea/
-#*.md
-#*.iml
-#logs/
+# Exclude Maven's cache
+.m2/
+
+# Exclude git files
+.git/
+
+# Exclude IDE files
+.idea/
+.vscode/
+
+# Don't exclude the target directory where the jar file is located
+!target/
+
+# Exclude OS-generated files
+.DS_Store
+Thumbs.db
+
