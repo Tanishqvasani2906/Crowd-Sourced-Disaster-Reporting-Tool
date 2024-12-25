@@ -1,6 +1,6 @@
-target/
-.git/
-.idea/
-*.md
-*.iml
-logs/
+#target/
+#.git/
+#.idea/
+#*.md
+#*.iml
+#logs/
