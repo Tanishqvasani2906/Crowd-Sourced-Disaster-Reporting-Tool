@@ -58,19 +58,10 @@ public class DisasterReportController {
         disasterReport.setSeverity(disasterReportRequest.getSeverity());
         disasterReport.setContactInfo(disasterReportRequest.getContactInfo());
         disasterReport.setDescription(disasterReportRequest.getDescription());
-
-        // Directly store the Base64 string from the request
-//        if (disasterReportRequest.getImageUrl() != null && !disasterReportRequest.getImageUrl().isEmpty()) {
-//            // Validate Base64 format (optional, for safety)
-//            if (isBase64(disasterReportRequest.getImageUrl())) {
-//                disasterReport.setImageUrl(disasterReportRequest.getImageUrl());
-//            } else {
-//                return new ResponseEntity<>("Invalid Base64 image format", HttpStatus.BAD_REQUEST);
-//            }
-//        }
         disasterReport.setImageUrl(disasterReportRequest.getImageUrl());
         disasterReport.setCreatedAt(new Date());
-        disasterReport.setStatus(DisasterReportStatus.PENDING); // Set default status
+        disasterReport.setStatus(DisasterReportStatus.PENDING);
+        disasterReport.setReportId(disasterReportRequest.getReportId());
 
         DisasterReport savedDisasterReport = disasterReportServices.saved(disasterReport);
 

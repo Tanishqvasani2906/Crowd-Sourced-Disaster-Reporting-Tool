@@ -46,6 +46,8 @@ public class DisasterReport {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String imageUrl;
 
+    @Column(name = "report_id", updatable = false, nullable = false, unique = true)
+    private String reportId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @PastOrPresent(message = "Creation date cannot be in the future")
