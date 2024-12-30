@@ -2,6 +2,7 @@ package com.example.Disaster_Management_Tool.Controllers;
 
 import com.example.Disaster_Management_Tool.Dto.LoginResponse;
 import com.example.Disaster_Management_Tool.Dto.UserRequest;
+import com.example.Disaster_Management_Tool.Entities.Role;
 import com.example.Disaster_Management_Tool.Entities.User;
 import com.example.Disaster_Management_Tool.Services.JWTService;
 import com.example.Disaster_Management_Tool.Services.UserService;
@@ -11,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5173")
+@CrossOrigin(origins = "http://127.0.0.1:3000")
 @RequestMapping("/userlogin")
 public class AuthController {
     @Autowired
@@ -20,19 +23,40 @@ public class AuthController {
     @Autowired
     private JWTService jwtService;
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
-        // Convert UserRequest to User entity
-        User user = new User();
-        user.setUsername(userRequest.getUsername());
-        user.setPassword(userRequest.getPassword()); // Ensure you hash the password before saving
-        user.setEmail(userRequest.getEmail());
+//    @PostMapping("/register")
+//    public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
+//        // Convert UserRequest to User entity
+//        User user = new User();
+//        user.setUsername(userRequest.getUsername());
+//        user.setPassword(userRequest.getPassword()); // Ensure you hash the password before saving
+//        user.setEmail(userRequest.getEmail());
+//
+//        // Register user
+//        User registeredUser = service.register(user);
+//
+//        return ResponseEntity.ok(registeredUser);
+//    }
+@PostMapping("/register")
+public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
+    // Convert UserRequest to User entity
+    User user = new User();
 
-        // Register user
-        User registeredUser = service.register(user);
+    user.setUsername(userRequest.getUsername());
+    user.setPassword(userRequest.getPassword()); // Make sure to hash the password before saving (use a password encoder)
+    user.setEmail(userRequest.getEmail());
+    user.setRole(userRequest.getRole() != null ? userRequest.getRole() : Role.USER); // Default to 'USER' if role is not provided
+    user.setLocation(userRequest.getLocation());  // Setting the location
+    user.setLatitude(userRequest.getLatitude());  // Setting latitude
+    user.setLongitude(userRequest.getLongitude());  // Setting longitude
+    user.setUpdatedAt(LocalDateTime.now());
+    user.setCreatedAt(LocalDateTime.now());
 
-        return ResponseEntity.ok(registeredUser);
-    }
+    // Register user
+    User registeredUser = service.register(user);
+
+    return ResponseEntity.ok(registeredUser);
+}
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody UserRequest userRequest) {

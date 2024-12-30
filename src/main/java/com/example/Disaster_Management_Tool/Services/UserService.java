@@ -47,7 +47,8 @@ public String verify(User user) {
     // Check if the authentication is successful
     if (authentication.isAuthenticated()) {
         // Generate JWT token using the authenticated user's username
-        String token = jwtService.generateToken(user.getUsername());
+        String token = jwtService.generateToken(user.getUsername(), String.valueOf(user.getRole()), user.getId());
+
         return token;
     } else {
         // Return failure message if authentication fails

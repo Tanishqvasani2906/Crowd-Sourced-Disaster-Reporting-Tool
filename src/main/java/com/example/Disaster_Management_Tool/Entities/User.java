@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +15,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,6 +27,25 @@ public class User {
     private String password;
     @Column(name = "email")
     private String email;
+
+    @Enumerated(EnumType.STRING) // Enum stored as String in the database
+    @Column(nullable = false)
+    private Role role = Role.USER; // Default role to `USER`
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false)
+    private Float latitude;
+
+    @Column(nullable = false)
+    private Float longitude;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now(); // Default to current time
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt; // Automatically updated
 
     private boolean enabled = false;
 
