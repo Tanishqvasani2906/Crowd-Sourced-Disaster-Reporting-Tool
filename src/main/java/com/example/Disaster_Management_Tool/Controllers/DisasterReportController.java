@@ -19,7 +19,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +38,11 @@ public class DisasterReportController {
     @Autowired
     private UserService userServices;
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://127.0.0.1:3000")
     @PostMapping("/submit")
     public ResponseEntity<?> createDisasterReport(@RequestBody DisasterReportRequest disasterReportRequest) {
         System.out.println(disasterReportRequest);
+
         // Get the current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -45,7 +50,7 @@ public class DisasterReportController {
         // Fetch user entity based on the username
         User user = userServices.findByUsername(username);
 
-        //create disaster instance
+        // Create disaster instance
         DisasterReport disasterReport = new DisasterReport();
         disasterReport.setUser(user);
         disasterReport.setDisasterType(disasterReportRequest.getDisasterType());
@@ -53,16 +58,30 @@ public class DisasterReportController {
         disasterReport.setSeverity(disasterReportRequest.getSeverity());
         disasterReport.setContactInfo(disasterReportRequest.getContactInfo());
         disasterReport.setDescription(disasterReportRequest.getDescription());
-        disasterReport.setImageUrl(disasterReportRequest.getImageUrl()); // Directly set the image URL
-        disasterReport.setVideoUrl(disasterReportRequest.getVideoUrl()); // Directly set the video URL
+
+        // Directly store the Base64 string from the request
+//        if (disasterReportRequest.getImageUrl() != null && !disasterReportRequest.getImageUrl().isEmpty()) {
+//            // Validate Base64 format (optional, for safety)
+//            if (isBase64(disasterReportRequest.getImageUrl())) {
+//                disasterReport.setImageUrl(disasterReportRequest.getImageUrl());
+//            } else {
+//                return new ResponseEntity<>("Invalid Base64 image format", HttpStatus.BAD_REQUEST);
+//            }
+//        }
+        disasterReport.setImageUrl(disasterReportRequest.getImageUrl());
         disasterReport.setCreatedAt(new Date());
         disasterReport.setStatus(DisasterReportStatus.PENDING); // Set default status
-
 
         DisasterReport savedDisasterReport = disasterReportServices.saved(disasterReport);
 
         return new ResponseEntity<>(savedDisasterReport, HttpStatus.CREATED);
     }
+
+    // Helper method to validate Base64 format
+//    private boolean isBase64(String base64) {
+//        return base64.matches("^(data:image\\/[^;]+;base64,)?[A-Za-z0-9+/=]+$");
+//    }
+
 //@PostMapping("/disaster-report")
 //public ResponseEntity<?> createDisasterReport(@RequestBody DisasterReport disasterReport) {
 //    User currentUser = userServices.getCurrentUser(); // Get current user (from session, JWT, etc.)

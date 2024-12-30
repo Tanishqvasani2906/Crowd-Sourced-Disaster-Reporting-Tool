@@ -31,7 +31,7 @@ public class DisasterReport {
 
 //    @NotBlank(message = "Severity is required")
     @NotNull
-    @Pattern(regexp = "Low|Moderate|High", message = "Severity must be either 'Low', 'Moderate', or 'High'")
+    @Pattern(regexp = "Emergency|NonEmergency|Critical|LowPriority", message = "Severity must be either 'Low', 'Moderate', or 'High'")
     private String severity;
 
     @NotBlank(message = "Description is required")
@@ -43,13 +43,9 @@ public class DisasterReport {
     @Pattern(regexp = "^[0-9+()\\- ]+$", message = "Contact information contains invalid characters")
     private String contactInfo;
 
-    @Pattern(regexp = "^(http|https)://.*|$", message = "Invalid image URL format")
-    @Column(nullable = true)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String imageUrl;
 
-    @Pattern(regexp = "^(http|https)://.*|$", message = "Invalid video URL format")
-    @Column(nullable = true)
-    private String videoUrl;
 
     @Temporal(TemporalType.TIMESTAMP)
     @PastOrPresent(message = "Creation date cannot be in the future")
@@ -71,5 +67,6 @@ public class DisasterReport {
     @OneToOne(mappedBy = "disasterReport", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonIgnore
     private ReviewReport reviewReport;
+
 
 }

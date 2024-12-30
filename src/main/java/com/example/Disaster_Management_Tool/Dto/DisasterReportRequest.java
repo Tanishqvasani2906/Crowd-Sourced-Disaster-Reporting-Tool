@@ -18,6 +18,6 @@ public class DisasterReportRequest {
     private String description;
     private String contactInfo;
     private String imageUrl;
-    private String videoUrl;
+//    private String videoUrl;
 
 }
