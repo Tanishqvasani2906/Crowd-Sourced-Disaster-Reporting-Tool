@@ -34,7 +34,7 @@ public class DisasterReportController {
     @Autowired
     private UserService userServices;
 
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
+    @CrossOrigin(origins = "*")
     @PostMapping("/submit")
     public ResponseEntity<?> createDisasterReport(@RequestBody DisasterReportRequest disasterReportRequest) {
         System.out.println(disasterReportRequest);
