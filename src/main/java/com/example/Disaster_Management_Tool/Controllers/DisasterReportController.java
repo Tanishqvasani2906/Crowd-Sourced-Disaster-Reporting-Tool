@@ -62,6 +62,9 @@ public class DisasterReportController {
         disasterReport.setCreatedAt(new Date());
         disasterReport.setStatus(DisasterReportStatus.PENDING);
         disasterReport.setReportId(disasterReportRequest.getReportId());
+        disasterReport.setTitle(disasterReportRequest.getTitle());
+        disasterReport.setLongitude(disasterReportRequest.getLongitude());
+        disasterReport.setLatitude(disasterReportRequest.getLatitude());
 
         DisasterReport savedDisasterReport = disasterReportServices.saved(disasterReport);
 
@@ -97,6 +100,20 @@ public class DisasterReportController {
 
         return ResponseEntity.ok(reports);
     }
+
+    @GetMapping("/search-report/{reportId}")
+    public ResponseEntity<DisasterReport> getDisasterReportByReportId(@PathVariable String reportId) {
+        // Call service to fetch disaster report by reportId
+        Optional<DisasterReport> disasterReportOptional = disasterReportServices.getDisasterReportByReportId(reportId);
+
+        // Return the disaster report if found, else return a 404 Not Found
+        if (disasterReportOptional.isPresent()) {
+            return ResponseEntity.ok(disasterReportOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 
     @PutMapping("/review/{id}")
     public ResponseEntity<?> reviewDisasterReport(@PathVariable String id) {

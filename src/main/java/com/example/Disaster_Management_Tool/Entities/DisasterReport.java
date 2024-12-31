@@ -31,12 +31,21 @@ public class DisasterReport {
 
 //    @NotBlank(message = "Severity is required")
     @NotNull
-    @Pattern(regexp = "Emergency|NonEmergency|Critical|LowPriority", message = "Severity must be either 'Low', 'Moderate', or 'High'")
+    @Pattern(regexp = "Emergency|NonEmergency|Critical|LowPriority", message = "Severity must be either 'Emergency', 'Critical', or 'LowPriority'")
     private String severity;
 
     @NotBlank(message = "Description is required")
     @Size(max = 1000, message = "Description should not exceed 1000 characters")
     private String description;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "latitude")
+    private Float latitude;
+
+    @Column(name = "longitude")
+    private Float longitude;
 
     @NotBlank(message = "Contact information is required")
     @Size(max = 255, message = "Contact information should not exceed 255 characters")

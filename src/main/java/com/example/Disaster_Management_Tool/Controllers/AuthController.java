@@ -1,18 +1,22 @@
 package com.example.Disaster_Management_Tool.Controllers;
 
+import com.example.Disaster_Management_Tool.Dto.LoginRequest;
 import com.example.Disaster_Management_Tool.Dto.LoginResponse;
 import com.example.Disaster_Management_Tool.Dto.UserRequest;
 import com.example.Disaster_Management_Tool.Entities.Role;
 import com.example.Disaster_Management_Tool.Entities.User;
+import com.example.Disaster_Management_Tool.Repositories.UserRepo;
 import com.example.Disaster_Management_Tool.Services.JWTService;
 import com.example.Disaster_Management_Tool.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:3000")
@@ -22,6 +26,8 @@ public class AuthController {
     private UserService service;
     @Autowired
     private JWTService jwtService;
+    @Autowired
+    private UserRepo userRepo;
 
 //    @PostMapping("/register")
 //    public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
@@ -45,6 +51,7 @@ public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
     user.setPassword(userRequest.getPassword()); // Make sure to hash the password before saving (use a password encoder)
     user.setEmail(userRequest.getEmail());
     user.setRole(userRequest.getRole() != null ? userRequest.getRole() : Role.USER); // Default to 'USER' if role is not provided
+//    user.setRole(userRequest.getRole());
     user.setLocation(userRequest.getLocation());  // Setting the location
     user.setLatitude(userRequest.getLatitude());  // Setting latitude
     user.setLongitude(userRequest.getLongitude());  // Setting longitude
@@ -65,12 +72,17 @@ public ResponseEntity<User> register(@RequestBody UserRequest userRequest) {
         user.setUsername(userRequest.getUsername());
         user.setPassword(userRequest.getPassword()); // Ensure you use the same hashing mechanism for verification
 
+
+
         String token = service.verify(user);
         String username = userRequest.getUsername();
+
         LoginResponse loginResponse = new LoginResponse(token, username);
 
         return ResponseEntity.ok(loginResponse);
     }
+
+
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {

@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/team_assign/getAllTeams").permitAll()
                         .requestMatchers("/review-report/addReviewReport").permitAll()
                         .requestMatchers("/team_assign/unassign/{teamId}").permitAll()
+                        .requestMatchers("/disaster-report/search-report/{reportId}").permitAll()
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,17 +1,18 @@
 package com.example.Disaster_Management_Tool.Dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class LoginResponse {
     private String token;
     private String username;
+//    private String role;
+
 
     // Getters and setters
     public String getToken() {

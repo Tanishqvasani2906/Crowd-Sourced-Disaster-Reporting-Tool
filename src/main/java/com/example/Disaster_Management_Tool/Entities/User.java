@@ -30,7 +30,7 @@ public class User {
 
     @Enumerated(EnumType.STRING) // Enum stored as String in the database
     @Column(nullable = false)
-    private Role role = Role.USER; // Default role to `USER`
+    private Role role; // Default role to `USER`
 
     @Column(nullable = false)
     private String location;

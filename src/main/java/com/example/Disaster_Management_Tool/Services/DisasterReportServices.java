@@ -73,4 +73,9 @@ public class DisasterReportServices {
     public void updateTeamStatus(TeamAssign assignedTeam) {
         return;
     }
+
+    // Service method to find disaster report by reportId
+    public Optional<DisasterReport> getDisasterReportByReportId(String reportId) {
+        return disasterReportRepo.findByReportId(reportId);
+    }
 }

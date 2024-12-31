@@ -2,6 +2,7 @@ package com.example.Disaster_Management_Tool.Services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,23 +31,37 @@ public class JWTService {
         }
     }
 
-    public String generateToken(String username, String role, String userId) {
+//    public String generateToken(String username, String role, String userId) {
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("role", role);   // Add role to the claims
+//        claims.put("id", userId);   // Add user ID to the claims
+//
+//        return Jwts.builder()
+//                .setClaims(claims)
+////                .add(claims)
+//                .subject(username)
+//                .issuedAt(new Date(System.currentTimeMillis()))
+//                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
+////                .and()
+//                .signWith(getKey())
+//                .compact();
+//    }
+        public String generateToken(String username, String role, String userId) {
+            System.out.println("Generating token with role: " + role);  // Log role before generating token
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);   // Add role to the claims
-        claims.put("id", userId);   // Add user ID to the claims
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("role", role);  // Add role to the claims
+            claims.put("id", userId);  // Add user ID to the claims
 
-        return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
-                .and()
-                .signWith(getKey())
-                .compact();
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(username)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
+                    .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
+                    .compact();
+        }
 
-    }
 
     private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
@@ -83,8 +98,18 @@ public class JWTService {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
+        final String role = extractRole(token);  // Extract role from token
+        final String userId = extractUserId(token);  // Extract userId from token
+
+        // You can now use the role and userId for additional checks if needed
+        // For example, you could check if the role matches the expected role:
+        if (role.equals("ADMIN")) {
+            // Additional logic for admin users
+        }
+
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

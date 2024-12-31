@@ -19,5 +19,8 @@ public class DisasterReportRequest {
     private String contactInfo;
     private String imageUrl;
     private String reportId;
+    private String title;
+    private Float  latitude;
+    private Float  longitude;
 
 }
