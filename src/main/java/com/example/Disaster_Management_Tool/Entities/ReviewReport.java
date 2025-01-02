@@ -14,12 +14,16 @@ public class ReviewReport {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    @Column(name = "affected_people")
+    private String affectedPeople;
     @Column(name = "no_of_people_rescued")
     private String NumberOfPeopleRescued;
     @Column(name = "no_of_people_died")
-    private String PeopleDied;
+    private String Casualties;
     @Column(name = "detailed_description")
     private String DetailedDescription;
+    @Column(name = "evacuation_centres")
+    private String EvacuationCentres;
     @Column(name = "approved")
     private Boolean Approved = false;
 

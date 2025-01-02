@@ -30,7 +30,9 @@ public class ReviewReportController {
 
         ReviewReport newReviewReport = new ReviewReport();
         newReviewReport.setNumberOfPeopleRescued(reviewReport.getNumberOfPeopleRescued());
-        newReviewReport.setPeopleDied(reviewReport.getPeopleDied());
+        newReviewReport.setCasualties(reviewReport.getCasualties());
+        newReviewReport.setAffectedPeople(reviewReport.getAffectedPeople());
+        newReviewReport.setEvacuationCentres(reviewReport.getEvacuationCentres());
         newReviewReport.setDetailedDescription(reviewReport.getDetailedDescription());
         // Set approved to true when the review report is submitted
         newReviewReport.setApproved(true); // Set approved to true
