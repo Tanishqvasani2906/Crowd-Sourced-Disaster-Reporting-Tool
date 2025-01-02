@@ -65,6 +65,7 @@ public class DisasterReportController {
         disasterReport.setTitle(disasterReportRequest.getTitle());
         disasterReport.setLongitude(disasterReportRequest.getLongitude());
         disasterReport.setLatitude(disasterReportRequest.getLatitude());
+        disasterReport.setReviewReport(null);
 
         DisasterReport savedDisasterReport = disasterReportServices.saved(disasterReport);
 

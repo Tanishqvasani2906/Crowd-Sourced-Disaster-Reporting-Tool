@@ -2,6 +2,7 @@ package com.example.Disaster_Management_Tool.Entities;
 
 import com.example.Disaster_Management_Tool.Dto.DisasterReportStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -75,9 +76,9 @@ public class DisasterReport {
     @JoinColumn(name = "team_assign_id")
     private TeamAssign teamAssign;
 
-    @OneToOne(mappedBy = "disasterReport", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    @OneToOne(mappedBy = "disasterReport", cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+//    @JsonIgnore
     private ReviewReport reviewReport;
-
 
 }
