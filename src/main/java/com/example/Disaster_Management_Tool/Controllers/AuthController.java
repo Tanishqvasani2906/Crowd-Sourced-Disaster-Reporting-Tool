@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:3000")
+@CrossOrigin(origins = {"http://127.0.0.1:3000 , https://*.vercel.app"})
 @RequestMapping("/userlogin")
 public class AuthController {
     @Autowired
