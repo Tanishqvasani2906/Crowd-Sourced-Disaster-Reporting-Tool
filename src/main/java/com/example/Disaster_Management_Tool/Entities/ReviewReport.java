@@ -1,5 +1,6 @@
 package com.example.Disaster_Management_Tool.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class ReviewReport {
     @Column(name = "approved")
     private Boolean Approved = false;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "disaster_report_id", referencedColumnName = "id")
     private DisasterReport disasterReport;
