@@ -45,6 +45,7 @@ public ResponseEntity<?> register(@RequestBody UserRequest userRequest) {
         user.setLongitude(userRequest.getLongitude());  // Setting longitude
         user.setUpdatedAt(LocalDateTime.now());
         user.setCreatedAt(LocalDateTime.now());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
 
         // Register user
         User registeredUser = service.register(user);

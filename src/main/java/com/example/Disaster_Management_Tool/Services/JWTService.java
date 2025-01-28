@@ -31,7 +31,7 @@ public class JWTService {
         }
     }
 
-//    public String generateToken(String username, String role, String userId) {
+    //    public String generateToken(String username, String role, String userId) {
 //        Map<String, Object> claims = new HashMap<>();
 //        claims.put("role", role);   // Add role to the claims
 //        claims.put("id", userId);   // Add user ID to the claims
@@ -46,21 +46,21 @@ public class JWTService {
 //                .signWith(getKey())
 //                .compact();
 //    }
-        public String generateToken(String username, String role, String userId) {
-            System.out.println("Generating token with role: " + role);  // Log role before generating token
+    public String generateToken(String username, String role, String userId) {
+        System.out.println("Generating token with role: " + role);  // Log role before generating token
 
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("role", role);  // Add role to the claims
-            claims.put("id", userId);  // Add user ID to the claims
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);  // Add role to the claims
+        claims.put("id", userId);  // Add user ID to the claims
 
-            return Jwts.builder()
-                    .setClaims(claims)
-                    .setSubject(username)
-                    .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
-                    .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
-                    .compact();
-        }
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
+                .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
+                .compact();
+    }
 
 
     private SecretKey getKey() {

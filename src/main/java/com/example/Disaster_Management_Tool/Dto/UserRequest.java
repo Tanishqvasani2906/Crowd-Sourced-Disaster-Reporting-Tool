@@ -1,12 +1,7 @@
 package com.example.Disaster_Management_Tool.Dto;
 
 import com.example.Disaster_Management_Tool.Entities.Role;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,4 +36,7 @@ public class UserRequest {
     @DecimalMin(value = "-180.0", message = "Longitude must be between -180.0 and 180.0")
     @DecimalMax(value = "180.0", message = "Longitude must be between -180.0 and 180.0")
     private Float longitude;  // New field for longitude
+
+    @Pattern(regexp = "^[0-9+()\\- ]+$", message = "Contact information contains invalid characters")
+    private String phoneNumber;
 }

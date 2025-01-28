@@ -41,6 +41,9 @@ public class User {
     @Column(nullable = false)
     private Float longitude;
 
+    @Column(nullable = false)
+    private String phoneNumber;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now(); // Default to current time
 

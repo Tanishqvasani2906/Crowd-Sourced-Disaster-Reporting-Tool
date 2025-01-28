@@ -34,7 +34,7 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
-                        .requestMatchers("/userlogin/register", "/userlogin/login" , "/userlogin/logout").permitAll()
+                        .requestMatchers("/userlogin/register", "/userlogin/login" , "/userlogin/logout" ,"/sos-alerts").permitAll()
                         .requestMatchers("/disaster-report/submit").permitAll()
                         .requestMatchers("/otp/send", "otp/verify").permitAll()
                         .requestMatchers("/disaster-report/user-reports","/disaster-report/admin-reports").permitAll()
@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/review-report/addReviewReport").permitAll()
                         .requestMatchers("/team_assign/unassign/{teamId}").permitAll()
                         .requestMatchers("/disaster-report/search-report/{reportId}").permitAll()
+
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
                 sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
