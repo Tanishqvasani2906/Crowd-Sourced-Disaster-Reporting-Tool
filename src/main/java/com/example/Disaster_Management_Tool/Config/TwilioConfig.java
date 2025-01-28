@@ -1,29 +1,27 @@
 package com.example.Disaster_Management_Tool.Config;
 
-import org.springframework.beans.factory.annotation.Value;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TwilioConfig {
 
-    @Value("${twilio.account.sid}")
-    private String accountSid;
+    private final Dotenv dotenv;
 
-    @Value("${twilio.auth.token}")
-    private String authToken;
-
-    @Value("${twilio.whatsapp.from}")
-    private String fromWhatsAppNumber;
+    // Load the .env file
+    public TwilioConfig() {
+        this.dotenv = Dotenv.configure().load();
+    }
 
     public String getAccountSid() {
-        return accountSid;
+        return dotenv.get("TWILIO_ACCOUNT_SID");
     }
 
     public String getAuthToken() {
-        return authToken;
+        return dotenv.get("TWILIO_AUTH_TOKEN");
     }
 
     public String getFromWhatsAppNumber() {
-        return fromWhatsAppNumber;
+        return dotenv.get("TWILIO_WHATSAPP_FROM");
     }
 }

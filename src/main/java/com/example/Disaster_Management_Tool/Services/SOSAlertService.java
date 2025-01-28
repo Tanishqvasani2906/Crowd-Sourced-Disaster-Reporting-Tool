@@ -1,10 +1,10 @@
 package com.example.Disaster_Management_Tool.Services;
 
-import com.example.Disaster_Management_Tool.Config.TwilioConfig;
 import com.example.Disaster_Management_Tool.Entities.DisasterReport;
 import com.example.Disaster_Management_Tool.Entities.User;
 import com.example.Disaster_Management_Tool.Repositories.DisasterReportRepo;
 import com.example.Disaster_Management_Tool.Repositories.UserRepo;
+import io.github.cdimascio.dotenv.Dotenv;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -22,10 +22,13 @@ public class SOSAlertService {
     @Autowired
     private UserRepo userRepository;
 
-    @Autowired
-    private TwilioConfig twilioConfig;
+    private final Dotenv dotenv;
 
     private static final double EARTH_RADIUS_KM = 6371;
+
+    public SOSAlertService() {
+        this.dotenv = Dotenv.configure().load(); // Load .env file
+    }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);
@@ -39,7 +42,12 @@ public class SOSAlertService {
     }
 
     public String sendSOSAlerts(String reportId, double radius, String message) {
-        //changed to string .valueof due to the upcoming id in the long
+        // Retrieve Twilio credentials and phone number from the .env file
+        String accountSid = dotenv.get("TWILIO_ACCOUNT_SID");
+        String authToken = dotenv.get("TWILIO_AUTH_TOKEN");
+        String fromWhatsAppNumber = dotenv.get("TWILIO_WHATSAPP_FROM");
+
+        // Retrieve report details
         DisasterReport report = disasterReportRepository.findByReportId(reportId)
                 .orElseThrow(() -> new IllegalArgumentException("Report not found"));
 
@@ -47,6 +55,7 @@ public class SOSAlertService {
             throw new IllegalArgumentException("Report location coordinates not available");
         }
 
+        // Filter users within the specified radius
         List<User> users = userRepository.findAll();
         List<User> usersInArea = users.stream()
                 .filter(user -> user.getLatitude() != null && user.getLongitude() != null &&
@@ -58,20 +67,21 @@ public class SOSAlertService {
             return "No users found in the specified area";
         }
 
-        // Initialize Twilio
-        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
+        // Initialize Twilio with credentials from the .env file
+        Twilio.init(accountSid, authToken);
 
+        // Send WhatsApp messages to users in the area
         for (User user : usersInArea) {
-            sendWhatsAppMessage(user.getPhoneNumber(), report, message);
+            sendWhatsAppMessage(user.getPhoneNumber(), report, message, fromWhatsAppNumber);
         }
 
         return "Alert sent to " + usersInArea.size() + " users in the area";
     }
 
-    private void sendWhatsAppMessage(String to, DisasterReport report, String message) {
+    private void sendWhatsAppMessage(String to, DisasterReport report, String message, String fromWhatsAppNumber) {
         Message.creator(
                 new PhoneNumber("whatsapp:" + to),
-                new PhoneNumber(twilioConfig.getFromWhatsAppNumber()),
+                new PhoneNumber(fromWhatsAppNumber),
                 "Emergency Alert: An incident has been reported in your area.\n\n" +
                         "Location: " + report.getLocation() + "\n" +
                         "Type: " + report.getDisasterType() + "\n" +
@@ -81,4 +91,3 @@ public class SOSAlertService {
         ).create();
     }
 }
-
