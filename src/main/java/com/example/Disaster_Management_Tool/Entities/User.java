@@ -1,67 +1,48 @@
 package com.example.Disaster_Management_Tool.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Getter
 @Setter
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-    @Column(name = "username",unique = true)
-    private String username;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "email")
-    private String email;
+    private String id; // Auto-generated UUID
 
-    @Enumerated(EnumType.STRING) // Enum stored as String in the database
-    @Column(nullable = false)
-    private Role role; // Default role to `USER`
+    @Column(nullable = false, unique = true)
+    private String username; // Mandatory
 
-    @Column(nullable = false)
-    private String location;
+    @Column(nullable = false, unique = true)
+    private String phoneNumber; // Mandatory and unique
 
-    @Column(nullable = false)
-    private Float latitude;
+    @Column(nullable = true)
+    private String email; // Optional (nullable)
+
+    @Column(nullable = true)
+    private String password; // Optional (nullable)
 
     @Column(nullable = false)
-    private Float longitude;
+    private String location; // Mandatory
 
     @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // Default to current time
+    private Float latitude; // Mandatory
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt; // Automatically updated
+    private Float longitude; // Mandatory
 
-    private boolean enabled = false;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role; // Mandatory, default to USER if not provided
 
-    @Column(name = "email_varified", nullable = false)
-    private boolean emailVarified = false;
+    @Column(nullable = true)
+    private LocalDateTime createdAt; // Optional
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<DisasterReport> disasterReports;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<TeamAssign> teamAssignments;
-
-
+    @Column(nullable = true)
+    private LocalDateTime updatedAt; // Optional
 }

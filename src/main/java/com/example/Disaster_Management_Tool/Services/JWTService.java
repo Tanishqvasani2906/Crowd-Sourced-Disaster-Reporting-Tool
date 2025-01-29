@@ -17,11 +17,9 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-
     private String secretkey = "";
 
     public JWTService() {
-
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();
@@ -31,27 +29,14 @@ public class JWTService {
         }
     }
 
-    //    public String generateToken(String username, String role, String userId) {
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put("role", role);   // Add role to the claims
-//        claims.put("id", userId);   // Add user ID to the claims
-//
-//        return Jwts.builder()
-//                .setClaims(claims)
-////                .add(claims)
-//                .subject(username)
-//                .issuedAt(new Date(System.currentTimeMillis()))
-//                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000))
-////                .and()
-//                .signWith(getKey())
-//                .compact();
-//    }
-    public String generateToken(String username, String role, String userId) {
+    // Generate the token with userId, role, and phone number
+    public String generateToken(String username, String role, String userId, String phoneNumber) {
         System.out.println("Generating token with role: " + role);  // Log role before generating token
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);  // Add role to the claims
         claims.put("id", userId);  // Add user ID to the claims
+        claims.put("phoneNumber", phoneNumber);  // Add phone number to the claims
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -61,7 +46,6 @@ public class JWTService {
                 .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
                 .compact();
     }
-
 
     private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
@@ -83,6 +67,11 @@ public class JWTService {
         return extractClaim(token, claims -> claims.get("id", String.class));
     }
 
+    // Extract the 'phoneNumber' claim from the token
+    public String extractPhoneNumber(String token) {
+        return extractClaim(token, claims -> claims.get("phoneNumber", String.class));
+    }
+
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
@@ -90,26 +79,26 @@ public class JWTService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .setSigningKey(getKey())  // Set the signing key
+                .build()                  // Build the parser
+                .parseSignedClaims(token) // Parse the signed claims
+                .getPayload();            // Get the payload (claims)
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
         final String role = extractRole(token);  // Extract role from token
         final String userId = extractUserId(token);  // Extract userId from token
+        final String phoneNumber = extractPhoneNumber(token);  // Extract phone number from token
 
-        // You can now use the role and userId for additional checks if needed
-        // For example, you could check if the role matches the expected role:
+        // You can now use the role, userId, and phoneNumber for additional checks if needed
+        // For example, check if the user role is valid or if the phone number matches:
         if (role.equals("ADMIN")) {
-            // Additional logic for admin users
+            // Additional logic for admin users, if needed
         }
 
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -119,7 +108,7 @@ public class JWTService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    //logout functionality
+    // Logout functionality
     private Set<String> blacklistedTokens = new HashSet<>();
 
     // Add the token to the blacklist
@@ -131,5 +120,4 @@ public class JWTService {
     public boolean isTokenBlacklisted(String token) {
         return blacklistedTokens.contains(token);
     }
-
 }
