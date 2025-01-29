@@ -7,7 +7,7 @@ import com.example.Disaster_Management_Tool.Entities.Role;
 import com.example.Disaster_Management_Tool.Entities.User;
 import com.example.Disaster_Management_Tool.Repositories.UserRepo;
 import com.example.Disaster_Management_Tool.Services.JWTService;
-import com.example.Disaster_Management_Tool.Services.OTPService;
+//import com.example.Disaster_Management_Tool.Services.OTPService;
 import com.example.Disaster_Management_Tool.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -31,52 +31,52 @@ public class AuthController {
     @Autowired
     private UserRepo userRepo;
 
-    @Autowired
-    private OTPService otpService; // Service to handle OTP generation and validation
-
-    @PostMapping("/sendOtp")
-    public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
-        try {
-            // Validate phone number format
-            if (!isValidPhoneNumber(phoneNumber)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Invalid phone number format. Please check and try again.");
-            }
-
-            // Generate and send OTP
-            otpService.sendOtp(phoneNumber);
-            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
-        } catch (Exception e) {
-            // Log the exception (for internal debugging)
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to send OTP. Please try again.");
-        }
-    }
-
-    @PostMapping("/verifyOtp")
-    public ResponseEntity<?> verifyOtp(@RequestParam String phoneNumber, @RequestParam String otp) {
-        try {
-            // Validate phone number format
-            if (!isValidPhoneNumber(phoneNumber)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Invalid phone number format. Please check and try again.");
-            }
-
-            boolean isVerified = otpService.verifyOtp(phoneNumber, otp);
-
-            if (isVerified) {
-                return ResponseEntity.ok("OTP verified successfully!");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP. Please try again.");
-            }
-        } catch (Exception e) {
-            // Log the exception (for internal debugging)
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while verifying OTP. Please try again.");
-        }
-    }
+//    @Autowired
+//    private OTPService otpService; // Service to handle OTP generation and validation
+//
+//    @PostMapping("/sendOtp")
+//    public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
+//        try {
+//            // Validate phone number format
+//            if (!isValidPhoneNumber(phoneNumber)) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body("Invalid phone number format. Please check and try again.");
+//            }
+//
+//            // Generate and send OTP
+//            otpService.sendOtp(phoneNumber);
+//            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
+//        } catch (Exception e) {
+//            // Log the exception (for internal debugging)
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to send OTP. Please try again.");
+//        }
+//    }
+//
+//    @PostMapping("/verifyOtp")
+//    public ResponseEntity<?> verifyOtp(@RequestParam String phoneNumber, @RequestParam String otp) {
+//        try {
+//            // Validate phone number format
+//            if (!isValidPhoneNumber(phoneNumber)) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body("Invalid phone number format. Please check and try again.");
+//            }
+//
+//            boolean isVerified = otpService.verifyOtp(phoneNumber, otp);
+//
+//            if (isVerified) {
+//                return ResponseEntity.ok("OTP verified successfully!");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP. Please try again.");
+//            }
+//        } catch (Exception e) {
+//            // Log the exception (for internal debugging)
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred while verifying OTP. Please try again.");
+//        }
+//    }
 
     // Helper method to validate phone number format
     private boolean isValidPhoneNumber(String phoneNumber) {
