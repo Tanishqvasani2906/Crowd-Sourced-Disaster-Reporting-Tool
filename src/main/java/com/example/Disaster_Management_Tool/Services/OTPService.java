@@ -3,6 +3,7 @@ package com.example.Disaster_Management_Tool.Services;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class OTPService {
     @Value("${twilio.account.sid}")
     private String accountSid;
 
-    @Value("${twilio.sms.auth.token}")
+    @Value("${twilio.auth.token}")
     private String authToken;
 
     @Value("${twilio.phone.number}")
@@ -28,6 +29,20 @@ public class OTPService {
     // In-memory cache for OTPs (can be replaced with Redis or database for production)
     private Map<String, String> otpCache = new HashMap<>();
     private Map<String, Long> otpExpirationCache = new HashMap<>(); // To track OTP expiration
+
+    @PostConstruct
+    public void initTwilio() {
+        try {
+            if (accountSid == null || authToken == null) {
+                throw new IllegalArgumentException("Twilio credentials are missing.");
+            }
+            Twilio.init(accountSid, authToken);
+            System.out.println("Twilio initialized successfully");
+        } catch (Exception e) {
+            System.err.println("Error initializing Twilio: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     public OTPService() {
         try {
