@@ -30,22 +30,41 @@ public class JWTService {
     }
 
     // Generate the token with userId, role, and phone number
-    public String generateToken(String username, String role, String userId, String phoneNumber) {
-        System.out.println("Generating token with role: " + role);  // Log role before generating token
+//    public String generateToken(String username, String role, String userId, String phoneNumber) {
+//        System.out.println("Generating token with role: " + role);  // Log role before generating token
+//
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("role", role);  // Add role to the claims
+//        claims.put("id", userId);  // Add user ID to the claims
+//        claims.put("phoneNumber", phoneNumber);  // Add phone number to the claims
+//
+//        return Jwts.builder()
+//                .setClaims(claims)
+//                .setSubject(username)
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
+//                .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
+//                .compact();
+//    }
+    // Generate the token with correct mappings
+    public String generateToken(String userId, String username, String phoneNumber, String role) {
+        System.out.println("Generating token with role: " + role);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);  // Add role to the claims
-        claims.put("id", userId);  // Add user ID to the claims
-        claims.put("phoneNumber", phoneNumber);  // Add phone number to the claims
+        claims.put("role", role);  // ✅ Role should be role
+        claims.put("phoneNumber", phoneNumber);  // ✅ Phone number should be phone number
+        claims.put("id", userId);  // ✅ ID should be user ID
+        claims.put("username", username);  // ✅ Username should be username
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(username)  // ✅ Subject (sub) should be username
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
-                .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
+                .setExpiration(new Date(System.currentTimeMillis() + 3 * 30 * 60 * 60 * 24 * 1000)) // Token expiry time
+                .signWith(SignatureAlgorithm.HS256, secretkey)
                 .compact();
     }
+
 
     private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
@@ -56,21 +75,28 @@ public class JWTService {
         // extract the username from jwt token
         return extractClaim(token, Claims::getSubject);
     }
+//    public String extractUserName(String token) {
+//        // ✅ Extract username using the correct claim (phoneNumber)
+//        return extractClaim(token, claims -> claims.get("phoneNumber", String.class));
+//    }
+
 
     // Extract the 'role' claim from the token
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
-    // Extract the 'id' claim from the token
+//     Extract the 'id' claim from the token
     public String extractUserId(String token) {
         return extractClaim(token, claims -> claims.get("id", String.class));
     }
 
-    // Extract the 'phoneNumber' claim from the token
+//     Extract the 'phoneNumber' claim from the token
     public String extractPhoneNumber(String token) {
         return extractClaim(token, claims -> claims.get("phoneNumber", String.class));
     }
+
+
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
@@ -99,6 +125,11 @@ public class JWTService {
 
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+//    public boolean validateToken(String token, UserDetails userDetails) {
+//        final String phoneNumber = extractPhoneNumber(token);  // Extract phone number
+//        return (phoneNumber.equals(userDetails.getUsername()) && !isTokenExpired(token));
+//    }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

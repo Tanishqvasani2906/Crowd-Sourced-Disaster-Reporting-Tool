@@ -47,8 +47,14 @@ public class DisasterReportController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
+        // Debugging the retrieved username
+        System.out.println("Username from authentication: " + username);
+
         // Fetch user entity based on the username
         User user = userServices.findByUsername(username);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
 
         // Create disaster instance
         DisasterReport disasterReport = new DisasterReport();
