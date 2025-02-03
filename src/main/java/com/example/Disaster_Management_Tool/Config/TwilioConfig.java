@@ -10,16 +10,16 @@ public class TwilioConfig {
     // Load .env file
     private final Dotenv dotenv = Dotenv.load();
 
-    @Value("${twilio.account.sid}")
+    @Value("${TWILIO_ACCOUNT_SID}")
     private String accountSid;
 
-    @Value("${twilio.auth.token}")
+    @Value("${TWILIO_AUTH_TOKEN}")
     private String authToken;
 
-    @Value("${twilio.whatsapp.from}")
+    @Value("${TWILIO_WHATSAPP_FROM}")
     private String fromWhatsAppNumber;
 
-    @Value("${twilio.phone.number}")
+    @Value("${TWILIO_PHONE_NUMBER}")
     private String phoneNumber;
 
     // Constructor to load environment variables dynamically
