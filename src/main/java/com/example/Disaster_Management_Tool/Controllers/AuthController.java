@@ -46,7 +46,7 @@ public class AuthController {
 
             // Check if phone number exists in the database
             if (!userRepo.existsByPhoneNumber(phoneNumber)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
                         .body("Phone number is already registered");
             }
 
