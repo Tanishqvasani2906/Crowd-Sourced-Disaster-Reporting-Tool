@@ -109,6 +109,10 @@ public class OTPService {
     private String generateOtp() {
         // You can customize the OTP length here
         int otp = (int) (Math.random() * 900000) + 100000; // 6-digit OTP
+        String otpString = String.valueOf(otp);
+
+        // Print OTP to the console for debugging
+        System.out.println("Generated OTP: " + otpString);
         return String.valueOf(otp);
     }
 }
