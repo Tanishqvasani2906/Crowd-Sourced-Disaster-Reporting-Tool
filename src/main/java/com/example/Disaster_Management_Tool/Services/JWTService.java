@@ -30,23 +30,6 @@ public class JWTService {
         }
     }
 
-    // Generate the token with userId, role, and phone number
-//    public String generateToken(String username, String role, String userId, String phoneNumber) {
-//        System.out.println("Generating token with role: " + role);  // Log role before generating token
-//
-//        Map<String, Object> claims = new HashMap<>();
-//        claims.put("role", role);  // Add role to the claims
-//        claims.put("id", userId);  // Add user ID to the claims
-//        claims.put("phoneNumber", phoneNumber);  // Add phone number to the claims
-//
-//        return Jwts.builder()
-//                .setClaims(claims)
-//                .setSubject(username)
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 24 * 1000)) // Token expiry time
-//                .signWith(SignatureAlgorithm.HS256, secretkey) // Sign with the secret key
-//                .compact();
-//    }
     // Generate the token with correct mappings
     public String generateToken(String userId, String username, String phoneNumber, String role) {
         System.out.println("Generating token with role: " + role);
