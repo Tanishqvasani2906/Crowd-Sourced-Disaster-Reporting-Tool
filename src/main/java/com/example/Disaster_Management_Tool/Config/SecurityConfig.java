@@ -34,7 +34,7 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
-                        .requestMatchers("/userlogin/register", "/userlogin/login" , "/userlogin/logout" ,"/sos-alerts").permitAll()
+                        .requestMatchers("/userlogin/register", "/userlogin/login" , "/userlogin/logout" ,"/sos-alerts","/userlogin/check").permitAll()
                         .requestMatchers("/userlogin/sendOtp","/userlogin/verifyOtp").permitAll()
                         .requestMatchers("/disaster-report/submit").permitAll()
                         .requestMatchers("/otp/send", "otp/verify").permitAll()
