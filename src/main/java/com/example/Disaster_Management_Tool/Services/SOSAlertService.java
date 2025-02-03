@@ -24,14 +24,28 @@ public class SOSAlertService {
 
     private static final double EARTH_RADIUS_KM = 6371;
 
-    @Value("${twilio.account.sid}")
+    // Loading the Twilio configuration from environment variables
+    @Value("${TWILIO_ACCOUNT_SID}")
     private String accountSid;
 
-    @Value("${twilio.auth.token}")
+    @Value("${TWILIO_AUTH_TOKEN}")
     private String authToken;
 
-    @Value("${twilio.whatsapp.from}")
+    @Value("${TWILIO_WHATSAPP_FROM}")
     private String fromWhatsAppNumber;
+
+    // For checking if Twilio credentials are loaded properly
+    private void validateTwilioConfig() {
+        if (accountSid == null || accountSid.isEmpty()) {
+            throw new IllegalStateException("Twilio Account SID is not configured properly.");
+        }
+        if (authToken == null || authToken.isEmpty()) {
+            throw new IllegalStateException("Twilio Auth Token is not configured properly.");
+        }
+        if (fromWhatsAppNumber == null || fromWhatsAppNumber.isEmpty()) {
+            throw new IllegalStateException("Twilio WhatsApp number is not configured properly.");
+        }
+    }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);
@@ -45,6 +59,12 @@ public class SOSAlertService {
     }
 
     public String sendSOSAlerts(String reportId, double radius, String message) {
+        // Validate Twilio configuration
+        validateTwilioConfig();
+
+        // Initialize Twilio (make sure the credentials are valid before initializing)
+        Twilio.init(accountSid, authToken);
+
         // Retrieve report details
         DisasterReport report = disasterReportRepository.findByReportId(reportId)
                 .orElseThrow(() -> new IllegalArgumentException("Report not found"));
@@ -65,9 +85,6 @@ public class SOSAlertService {
             return "No users found in the specified area";
         }
 
-        // Initialize Twilio
-        Twilio.init(accountSid, authToken);
-
         // Send WhatsApp messages to users in the area
         for (User user : usersInArea) {
             sendWhatsAppMessage(user.getPhoneNumber(), report, message);
@@ -80,12 +97,19 @@ public class SOSAlertService {
         Message.creator(
                 new PhoneNumber("whatsapp:" + to),
                 new PhoneNumber(fromWhatsAppNumber),
-                "Emergency Alert: An incident has been reported in your area.\n\n" +
-                        "Location: " + report.getLocation() + "\n" +
-                        "Type: " + report.getDisasterType() + "\n" +
-                        "Description: " + report.getDescription() + "\n\n" +
-                        message +
-                        "\n\nPlease stay alert and follow local authorities' instructions."
+                "🚨 *Emergency Alert: Urgent Incident Report* 🚨\n\n" +
+                        "\"*⚠\uFE0F An urgent incident has been reported in your area. ⚠\uFE0F* Please stay alert and follow all local authorities' instructions.\n\n" +
+
+                        "*Details of the Incident:*\n" +
+                        "📍 *Location:* " + report.getLocation() + "\n" +
+                        "🔥 *Type of Disaster:* " + report.getDisasterType() + "\n" +
+                        "📝 *Description:* " + report.getDescription() + "\n\n" +
+
+                        "*Message from Authorities:* \n" +
+                        message + "\n\n" +
+
+                        "_Please stay alert and follow local authorities' instructions._"
         ).create();
     }
+
 }

@@ -16,14 +16,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class OTPService {
 
-    // Load Twilio credentials from the environment
-    @Value("${twilio.account.sid}")
+    // Load Twilio credentials from environment variables
+    @Value("${TWILIO_ACCOUNT_SID}")
     private String accountSid;
 
-    @Value("${twilio.auth.token}")
+    @Value("${TWILIO_AUTH_TOKEN}")
     private String authToken;
 
-    @Value("${twilio.phone.number}")
+    @Value("${TWILIO_PHONE_NUMBER}")
     private String twilioPhoneNumber;
 
     // In-memory cache for OTPs (can be replaced with Redis or database for production)
@@ -32,33 +32,15 @@ public class OTPService {
 
     @PostConstruct
     public void initTwilio() {
-        if (accountSid == null || authToken == null) {
+        if (accountSid == null || authToken == null || twilioPhoneNumber == null) {
             throw new IllegalArgumentException("Twilio credentials are missing.");
         }
         Twilio.init(accountSid, authToken);
         System.out.println("Twilio initialized successfully");
     }
 
-
     public OTPService() {
-//        try {
-//            // Initialize Twilio with credentials
-////            if (accountSid == null || authToken == null) {
-////                throw new IllegalArgumentException("Twilio credentials are missing.");
-////            }
-//            Twilio.init(accountSid, authToken);
-//        } catch (Exception e) {
-//            // Log the error for debugging
-//            System.err.println("Error initializing Twilio: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        if (accountSid == null || authToken == null) {
-//            throw new IllegalArgumentException("Twilio credentials are missing.");
-//        }
-//        Twilio.init(accountSid, authToken);
-//        System.out.println("Twilio initialized successfully");
     }
-
 
     // Method to send OTP to the provided phone number
     public void sendOtp(String phoneNumber) {
@@ -73,7 +55,7 @@ public class OTPService {
             Message message = Message.creator(
                             new PhoneNumber(phoneNumber), // To phone number
                             new PhoneNumber(twilioPhoneNumber), // From Twilio number
-                            "Your OTP is: " + otp) // Message body
+                            "Your OTP to register for DhruvaSetu is: " + otp) // Message body
                     .create();
 
             System.out.println("OTP sent to: " + phoneNumber);

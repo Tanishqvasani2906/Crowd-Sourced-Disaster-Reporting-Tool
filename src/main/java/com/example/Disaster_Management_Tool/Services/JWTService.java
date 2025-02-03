@@ -12,6 +12,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
@@ -60,7 +61,7 @@ public class JWTService {
                 .setClaims(claims)
                 .setSubject(username)  // ✅ Subject (sub) should be username
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 3 * 30 * 60 * 60 * 24 * 1000)) // Token expiry time
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(90))) // 3 months (assuming 30 days per month)
                 .signWith(SignatureAlgorithm.HS256, secretkey)
                 .compact();
     }
