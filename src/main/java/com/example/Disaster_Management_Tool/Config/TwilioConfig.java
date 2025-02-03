@@ -13,7 +13,7 @@ public class TwilioConfig {
     private static final Logger logger = LoggerFactory.getLogger(TwilioConfig.class);
 
     // Load .env file
-    private Dotenv dotenv = Dotenv.load();
+    private Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     @Value("${twilio.account.sid}")
     private String accountSid;
