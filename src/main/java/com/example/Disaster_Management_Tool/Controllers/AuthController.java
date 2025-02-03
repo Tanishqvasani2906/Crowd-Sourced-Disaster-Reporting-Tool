@@ -323,6 +323,11 @@ public class AuthController {
         }
         return null;
     }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> check() {
+        return ResponseEntity.ok("server is alive");
+    }
 }
 
 
