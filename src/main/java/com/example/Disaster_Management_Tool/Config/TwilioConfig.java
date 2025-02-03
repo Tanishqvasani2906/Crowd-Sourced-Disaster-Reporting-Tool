@@ -24,12 +24,31 @@ public class TwilioConfig {
 
     // Constructor to load environment variables dynamically
     public TwilioConfig() {
-        // Set values from .env to system properties
-        System.setProperty("TWILIO_ACCOUNT_SID", dotenv.get("TWILIO_ACCOUNT_SID"));
-        System.setProperty("TWILIO_AUTH_TOKEN", dotenv.get("TWILIO_AUTH_TOKEN"));
-        System.setProperty("TWILIO_WHATSAPP_FROM", dotenv.get("TWILIO_WHATSAPP_FROM"));
-        System.setProperty("TWILIO_PHONE_NUMBER", dotenv.get("TWILIO_PHONE_NUMBER"));
+        // Get values from .env (if available) or system environment variables
+        String accountSid = System.getenv("TWILIO_ACCOUNT_SID");
+        String authToken = System.getenv("TWILIO_AUTH_TOKEN");
+        String whatsappFrom = System.getenv("TWILIO_WHATSAPP_FROM");
+        String phoneNumber = System.getenv("TWILIO_PHONE_NUMBER");
+
+        // If running locally and dotenv is available, use it as a fallback
+        Dotenv dotenv;
+        try {
+            dotenv = Dotenv.configure().ignoreIfMissing().load(); // Only works if dotenv is present
+            accountSid = accountSid != null ? accountSid : dotenv.get("TWILIO_ACCOUNT_SID");
+            authToken = authToken != null ? authToken : dotenv.get("TWILIO_AUTH_TOKEN");
+            whatsappFrom = whatsappFrom != null ? whatsappFrom : dotenv.get("TWILIO_WHATSAPP_FROM");
+            phoneNumber = phoneNumber != null ? phoneNumber : dotenv.get("TWILIO_PHONE_NUMBER");
+        } catch (Exception e) {
+            System.out.println("Dotenv not found, using only system environment variables.");
+        }
+
+        // Set the final values
+        System.setProperty("TWILIO_ACCOUNT_SID", accountSid);
+        System.setProperty("TWILIO_AUTH_TOKEN", authToken);
+        System.setProperty("TWILIO_WHATSAPP_FROM", whatsappFrom);
+        System.setProperty("TWILIO_PHONE_NUMBER", phoneNumber);
     }
+
 
     // Getter methods
     public String getAccountSid() {
