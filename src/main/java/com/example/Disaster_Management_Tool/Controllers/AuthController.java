@@ -44,16 +44,22 @@ public class AuthController {
                         .body("Invalid phone number format. Please check and try again.");
             }
 
+            // Check if phone number exists in the database
+            if (!userRepo.existsByPhoneNumber(phoneNumber)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Phone number is already registered");
+            }
+
             // Generate and send OTP
             otpService.sendOtp(phoneNumber);
             return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
         } catch (Exception e) {
-            // Log the exception (for internal debugging)
-            e.printStackTrace();
+            e.printStackTrace(); // Log the exception for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to send OTP. Please try again.");
         }
     }
+
 
     @PostMapping("/verifyOtp")
     public ResponseEntity<?> verifyOtp(@RequestParam String phoneNumber, @RequestParam String otp) {
