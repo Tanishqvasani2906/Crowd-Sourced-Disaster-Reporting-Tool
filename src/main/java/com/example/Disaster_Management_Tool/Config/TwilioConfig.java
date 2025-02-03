@@ -1,6 +1,7 @@
 package com.example.Disaster_Management_Tool.Config;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import io.github.cdimascio.dotenv.DotenvException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class TwilioConfig {
 
     // Load .env file
-    private final Dotenv dotenv = Dotenv.load();
+    private Dotenv dotenv = Dotenv.load();
 
     @Value("${TWILIO_ACCOUNT_SID}")
     private String accountSid;
@@ -24,12 +25,19 @@ public class TwilioConfig {
 
     // Constructor to load environment variables dynamically
     public TwilioConfig() {
-        // Set values from .env to system properties
-        System.setProperty("TWILIO_ACCOUNT_SID", dotenv.get("TWILIO_ACCOUNT_SID"));
-        System.setProperty("TWILIO_AUTH_TOKEN", dotenv.get("TWILIO_AUTH_TOKEN"));
-        System.setProperty("TWILIO_WHATSAPP_FROM", dotenv.get("TWILIO_WHATSAPP_FROM"));
-        System.setProperty("TWILIO_PHONE_NUMBER", dotenv.get("TWILIO_PHONE_NUMBER"));
+        try {
+            dotenv = Dotenv.load();
+            System.setProperty("TWILIO_ACCOUNT_SID", dotenv.get("TWILIO_ACCOUNT_SID"));
+            System.setProperty("TWILIO_AUTH_TOKEN", dotenv.get("TWILIO_AUTH_TOKEN"));
+            System.setProperty("TWILIO_WHATSAPP_FROM", dotenv.get("TWILIO_WHATSAPP_FROM"));
+            System.setProperty("TWILIO_PHONE_NUMBER", dotenv.get("TWILIO_PHONE_NUMBER"));
+        } catch (DotenvException e) {
+            // Handle the case where .env file is not found
+            // Perhaps log a warning or use default values
+            System.err.println("Could not load .env file: " + e.getMessage());
+        }
     }
+
 
     // Getter methods
     public String getAccountSid() {
