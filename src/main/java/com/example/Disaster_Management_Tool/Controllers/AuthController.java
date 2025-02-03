@@ -35,30 +35,79 @@ public class AuthController {
     @Autowired
     private OTPService otpService; // Service to handle OTP generation and validation
 
+//    @PostMapping("/sendOtp")
+//    public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
+//        try {
+//            // Validate phone number format
+//            if (!isValidPhoneNumber(phoneNumber)) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body("Invalid phone number format. Please check and try again.");
+//            }
+//
+//            // Check if phone number exists in the database
+////            if (userRepo.existsByPhoneNumber(phoneNumber)) {
+////                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+////                        .body("Phone number is already registered");
+////            }
+//            // Remove country code (+91) if present
+////            if (phoneNumber.startsWith("+91")) {
+////                phoneNumber = phoneNumber.substring(3); // Remove first 3 characters
+////            }
+//
+//            // Debug: Print formatted phone number
+//            System.out.println("Formatted phone number for DB check: " + phoneNumber);
+//
+//            boolean phoneExists = userRepo.existsByPhoneNumber(phoneNumber);
+//            System.out.println("Does phone exist? " + phoneExists);
+//
+//            // Check if phone number is already registered
+//            if (phoneExists) {
+//                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+//                        .body("Phone number is already registered.");
+//            }
+//
+//            // Generate and send OTP
+//            otpService.sendOtp(phoneNumber);
+//            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
+//        } catch (Exception e) {
+//            e.printStackTrace(); // Log the exception for debugging
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to send OTP. Please try again.");
+//        }
+//    }
+
     @PostMapping("/sendOtp")
     public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
         try {
-            // Validate phone number format
+            // Ensure phone number starts with +91
+            phoneNumber = phoneNumber.trim();
+            if (!phoneNumber.startsWith("+91")) {
+                phoneNumber = "+91" + phoneNumber;
+            }
+
+            // Validate phone number format (Optional: Ensure it is a valid 10-digit number)
             if (!isValidPhoneNumber(phoneNumber)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid phone number format. Please check and try again.");
             }
 
-            // Check if phone number exists in the database
+            // Check if phone number exists in the database (after formatting)
             if (userRepo.existsByPhoneNumber(phoneNumber)) {
                 return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-                        .body("Phone number is already registered");
+                        .body("Phone number is already registered in DhruvaSetu");
             }
 
             // Generate and send OTP
             otpService.sendOtp(phoneNumber);
             return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
+
         } catch (Exception e) {
             e.printStackTrace(); // Log the exception for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to send OTP. Please try again.");
         }
     }
+
 
 
     @PostMapping("/verifyOtp")
@@ -124,6 +173,31 @@ public class AuthController {
 //                .body("An unexpected error occurred. Please try again later.");
 //    }
 //}
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody User user) {
+//        try {
+//            // Validate required fields
+//            if (user.getUsername() == null || user.getPhoneNumber() == null || user.getLocation() == null
+//                    || user.getLatitude() == null || user.getLongitude() == null) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body("All required fields (username, phoneNumber, location, latitude, longitude) must be provided!");
+//            }
+//
+//            // Ensure the role is set, defaulting to USER if not provided
+//            user.setRole(user.getRole() != null ? user.getRole() : Role.USER);
+//
+//            // Register the user (id is auto-generated)
+//            User registeredUser = service.register(user);
+//
+//            return ResponseEntity.ok(registeredUser);
+//        } catch (DataIntegrityViolationException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body("Data integrity violation: " + e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to register user. Please try again. Error: " + e.getMessage());
+//        }
+//    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -134,8 +208,21 @@ public class AuthController {
                         .body("All required fields (username, phoneNumber, location, latitude, longitude) must be provided!");
             }
 
+            // Ensure phone number is in the correct format (always store with +91)
+            String phoneNumber = user.getPhoneNumber().trim();
+            if (!phoneNumber.startsWith("+91")) {
+                phoneNumber = "+91" + phoneNumber;
+            }
+            user.setPhoneNumber(phoneNumber); // Save formatted number
+
             // Ensure the role is set, defaulting to USER if not provided
             user.setRole(user.getRole() != null ? user.getRole() : Role.USER);
+
+            // Check if the phone number is already registered
+            if (userRepo.existsByPhoneNumber(phoneNumber)) {
+                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+                        .body("Phone number is already registered!");
+            }
 
             // Register the user (id is auto-generated)
             User registeredUser = service.register(user);
@@ -149,6 +236,7 @@ public class AuthController {
                     .body("Failed to register user. Please try again. Error: " + e.getMessage());
         }
     }
+
 
 
 
