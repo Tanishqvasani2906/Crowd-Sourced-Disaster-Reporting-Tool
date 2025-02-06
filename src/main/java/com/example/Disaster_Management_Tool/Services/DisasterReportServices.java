@@ -78,4 +78,8 @@ public class DisasterReportServices {
     public Optional<DisasterReport> getDisasterReportByReportId(String reportId) {
         return disasterReportRepo.findByReportId(reportId);
     }
+
+//    public List<DisasterReport> getReportsByUserId(String userId) {
+//
+//    }
 }

@@ -35,47 +35,6 @@ public class AuthController {
     @Autowired
     private OTPService otpService; // Service to handle OTP generation and validation
 
-//    @PostMapping("/sendOtp")
-//    public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
-//        try {
-//            // Validate phone number format
-//            if (!isValidPhoneNumber(phoneNumber)) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                        .body("Invalid phone number format. Please check and try again.");
-//            }
-//
-//            // Check if phone number exists in the database
-////            if (userRepo.existsByPhoneNumber(phoneNumber)) {
-////                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-////                        .body("Phone number is already registered");
-////            }
-//            // Remove country code (+91) if present
-////            if (phoneNumber.startsWith("+91")) {
-////                phoneNumber = phoneNumber.substring(3); // Remove first 3 characters
-////            }
-//
-//            // Debug: Print formatted phone number
-//            System.out.println("Formatted phone number for DB check: " + phoneNumber);
-//
-//            boolean phoneExists = userRepo.existsByPhoneNumber(phoneNumber);
-//            System.out.println("Does phone exist? " + phoneExists);
-//
-//            // Check if phone number is already registered
-//            if (phoneExists) {
-//                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-//                        .body("Phone number is already registered.");
-//            }
-//
-//            // Generate and send OTP
-//            otpService.sendOtp(phoneNumber);
-//            return ResponseEntity.ok("OTP sent successfully to " + phoneNumber);
-//        } catch (Exception e) {
-//            e.printStackTrace(); // Log the exception for debugging
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Failed to send OTP. Please try again.");
-//        }
-//    }
-
     @PostMapping("/sendOtp")
     public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
         try {
@@ -108,8 +67,6 @@ public class AuthController {
         }
     }
 
-
-
     @PostMapping("/verifyOtp")
     public ResponseEntity<?> verifyOtp(@RequestParam String phoneNumber, @RequestParam String otp) {
         try {
@@ -141,63 +98,6 @@ public class AuthController {
         return phoneNumber.matches(regex);
     }
 
-
-    //@PostMapping("/register")
-//public ResponseEntity<?> register(@RequestBody UserRequest userRequest) {
-//    try {
-//        // Convert UserRequest to User entity
-//        User user = new User();
-//
-//        user.setUsername(userRequest.getUsername());
-//        user.setPassword(userRequest.getPassword()); // Make sure to hash the password before saving (use a password encoder)
-//        user.setEmail(userRequest.getEmail());
-//        user.setRole(userRequest.getRole() != null ? userRequest.getRole() : Role.USER); // Default to 'USER' if role is not provided
-//        user.setLocation(userRequest.getLocation());  // Setting the location
-//        user.setLatitude(userRequest.getLatitude());  // Setting latitude
-//        user.setLongitude(userRequest.getLongitude());  // Setting longitude
-//        user.setUpdatedAt(LocalDateTime.now());
-//        user.setCreatedAt(LocalDateTime.now());
-//        user.setPhoneNumber(userRequest.getPhoneNumber());
-//
-//        // Register user
-//        User registeredUser = service.register(user);
-//
-//        return ResponseEntity.ok(registeredUser);
-//    } catch (DataIntegrityViolationException e) {
-//        // Handle the case where the username is already taken
-//        return ResponseEntity.status(HttpStatus.CONFLICT)
-//                .body("Error: Username is already taken!");
-//    } catch (Exception e) {
-//        // Handle other exceptions
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body("An unexpected error occurred. Please try again later.");
-//    }
-//}
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody User user) {
-//        try {
-//            // Validate required fields
-//            if (user.getUsername() == null || user.getPhoneNumber() == null || user.getLocation() == null
-//                    || user.getLatitude() == null || user.getLongitude() == null) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                        .body("All required fields (username, phoneNumber, location, latitude, longitude) must be provided!");
-//            }
-//
-//            // Ensure the role is set, defaulting to USER if not provided
-//            user.setRole(user.getRole() != null ? user.getRole() : Role.USER);
-//
-//            // Register the user (id is auto-generated)
-//            User registeredUser = service.register(user);
-//
-//            return ResponseEntity.ok(registeredUser);
-//        } catch (DataIntegrityViolationException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body("Data integrity violation: " + e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Failed to register user. Please try again. Error: " + e.getMessage());
-//        }
-//    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -237,27 +137,6 @@ public class AuthController {
         }
     }
 
-
-
-
-
-
-    //    @PostMapping("/login")
-//    public ResponseEntity<LoginResponse> login(@RequestBody UserRequest userRequest) {
-//        // Convert UserRequest to User entity
-//        User user = new User();
-//        user.setUsername(userRequest.getUsername());
-//        user.setPassword(userRequest.getPassword()); // Ensure you use the same hashing mechanism for verification
-//
-//
-//
-//        String token = service.verify(user);
-//        String username = userRequest.getUsername();
-//
-//        LoginResponse loginResponse = new LoginResponse(token, username);
-//
-//        return ResponseEntity.ok(loginResponse);
-//    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -293,10 +172,6 @@ public class AuthController {
         }
     }
 
-
-
-
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         // Extract JWT token from the Authorization header
@@ -328,6 +203,13 @@ public class AuthController {
     public ResponseEntity<?> check() {
         return ResponseEntity.ok("server is alive");
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestBody User user) {
+        User updatedUser = userRepo.save(user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 }
 
 

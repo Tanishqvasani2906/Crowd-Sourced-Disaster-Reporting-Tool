@@ -205,4 +205,16 @@ public class DisasterReportController {
         disasterReportServices.assignTeamToReport(request.getReportId(), request.getTeamId());
         return ResponseEntity.ok("Team assigned to report successfully");
     }
+
+    @GetMapping("/fetchAllReportOfUsers/{userId}")
+    public ResponseEntity<?> fetchAllReportOfUsers(@PathVariable String userId) {
+        List<DisasterReport> reports = disasterReportServices.findByuserId(userId);
+
+        if (reports.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No reports found for user with ID: " + userId);
+        }
+
+        return ResponseEntity.ok(reports);
+    }
 }
