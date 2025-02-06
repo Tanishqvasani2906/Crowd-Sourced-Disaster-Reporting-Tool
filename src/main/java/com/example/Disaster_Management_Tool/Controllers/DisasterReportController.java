@@ -217,4 +217,27 @@ public class DisasterReportController {
 
         return ResponseEntity.ok(reports);
     }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<?> rejectDisasterReport(@PathVariable String id) {
+        try {
+            DisasterReport disasterReport = disasterReportServices.findById(id);
+
+            if (disasterReport == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Disaster report not found");
+            }
+            System.out.println("Found report: " + disasterReport);
+
+            if (!disasterReport.getStatus().equals(DisasterReportStatus.PENDING)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Report is not in PENDING status");
+            }
+
+            disasterReport.setStatus(DisasterReportStatus.REJECTED);
+            disasterReportServices.saved(disasterReport);
+
+            return ResponseEntity.ok("Disaster report status updated to REJECTED");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating report status");
+        }
+    }
 }

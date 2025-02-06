@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/team_assign/unassign/{teamId}").permitAll()
                         .requestMatchers("/disaster-report/search-report/{reportId}").permitAll()
                         .requestMatchers("/disaster-report/fetchAllReportOfUsers/{userId}").permitAll()
+                        .requestMatchers("/disaster-report/reject/{id}").permitAll()
 
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
