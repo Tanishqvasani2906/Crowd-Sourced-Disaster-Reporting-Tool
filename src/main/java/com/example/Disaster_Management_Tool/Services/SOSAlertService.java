@@ -34,6 +34,9 @@ public class SOSAlertService {
     @Value("${TWILIO_WHATSAPP_FROM}")
     private String fromWhatsAppNumber;
 
+    @Value("${TWILIO_PHONE_NUMBER}")
+    private String fromSmsNumber;
+
     // For checking if Twilio credentials are loaded properly
     private void validateTwilioConfig() {
         if (accountSid == null || accountSid.isEmpty()) {
@@ -44,6 +47,9 @@ public class SOSAlertService {
         }
         if (fromWhatsAppNumber == null || fromWhatsAppNumber.isEmpty()) {
             throw new IllegalStateException("Twilio WhatsApp number is not configured properly.");
+        }
+        if (fromSmsNumber == null || fromSmsNumber.isEmpty()) {
+            throw new IllegalStateException("Twilio SMS number is not configured properly.");
         }
     }
 
@@ -88,6 +94,7 @@ public class SOSAlertService {
         // Send WhatsApp messages to users in the area
         for (User user : usersInArea) {
             sendWhatsAppMessage(user.getPhoneNumber(), report, message);
+            sendSmsMessage(user.getPhoneNumber(), report, message); // New SMS sending function
         }
 
         return "Alert sent to " + usersInArea.size() + " users in the area";
@@ -109,6 +116,17 @@ public class SOSAlertService {
                         message + "\n\n" +
 
                         "_Please stay alert and follow local authorities' instructions._"
+        ).create();
+    }
+    private void sendSmsMessage(String to, DisasterReport report, String message) {
+        Message.creator(
+                new PhoneNumber(to),  // SMS doesn't need "whatsapp:"
+                new PhoneNumber(fromSmsNumber),
+                "🚨 Emergency Alert 🚨\n" +
+                        "Location: " + report.getLocation() + "\n" +
+                        "Disaster: " + report.getDisasterType() + "\n" +
+                        "Message: " + message + "\n" +
+                        "Stay safe & follow instructions."
         ).create();
     }
 
